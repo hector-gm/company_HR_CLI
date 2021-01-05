@@ -279,3 +279,120 @@ const addRole = () => {
          runApp();
      });
 };
+
+// Define function to create a new Department in the database:
+const addDepartment = () => {
+    inquirer
+     .prompt({
+         name: 'departmentName',
+         type: 'input',
+         message: 'What Department is being added?'
+     }).then((res) => {
+         connection.query(
+             'INSERT INTO department SET ?',
+             [{ name: res.departmentName }],
+             (err) => {
+                 if (err) {
+                    throw err;
+                 }
+             }
+         );
+     });
+     updateDepartmentArray();
+     runApp();
+};
+
+// Define the function to allow looking up of records by categories:
+const lookUp = () => {
+    inquirer
+        .prompt({
+            name: 'lookFor',
+            type: 'list',
+            message: 'What would you like to look for?',
+            choices: [
+                'Show all employees',
+                'Show all roles',
+                'Show all departments',
+                'Show a particular employee',
+                'Show all employees by role',
+                'Show all employees by department',
+                'Go back to previous options'
+            ],
+        }).then((res) => {
+            switch (res.lookFor) {
+                case 'Show all employees':
+                    showAllEmployees().then((res) =>{
+                        console.table(res);
+                        runApp();
+                    });
+                    break;
+
+                case 'Show all roles':
+                    showAllRoles().then((res) =>{
+                        console.table(res);
+                        runApp();
+                    });
+                    break;
+                
+                case 'Show all departments':
+                    showAllDepartments().then((res) => {
+                        console.table(res);
+                        runApp();
+                    });
+                    break;
+
+                case 'Show a particular employee':
+                    showEmployee().then((res) => {
+                        console.table(res);
+                        runApp();
+                    });
+                    break;
+                
+                case 'Show all employees by role':
+                    showAllByRole().then((res) => {
+                        console.table(res);
+                        runApp();
+                    });
+                    break;
+
+                case 'Show all employees by department':
+                    showAllByDepartment().then((res) => {
+                        console.table(res);
+                        runApp();
+                    });
+                    break;
+                
+                case 'Go back to previous options':
+                    runApp();
+
+                default: break;
+            }
+        });
+};
+
+// Define the individual record look up function referenced above:
+const showEmployee = () => {
+    inquirer    
+        .prompt({
+            name: 'employee',
+            type: 'list',
+            message: 'Choose employee:',
+            choices: [...employeeArray, 'Go Back'],
+        }).then((res) => {
+            if (res.employee === 'Go Back') {
+                lookUp();
+            } else {
+                showAllEmployees().then((employees) => {
+                    employees.forEach((element) => {
+                        if (res.employee === element.Full_Name) {
+                            console.table(element);
+                        }
+                    });
+                    runApp();
+                });
+            }
+        });
+};
+
+// Define function to enable search by role:
+const showAllByRole = ()
