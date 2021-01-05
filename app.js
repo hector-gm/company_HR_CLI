@@ -72,10 +72,16 @@ const updateDepartmentArray = () => {
 const showAllEmployees = () => {
     return new Promise((resolve, reject) => {
         connection.query(
-            
-        )
-    })
-}
+        'SELECT id, first_name, last_name, roles.title, department.name, roles.salary',
+        (err, data) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        });
+    });
+};
 
 // Call on Inquirer and run our CLI app:
 const runApp = () => {
