@@ -395,4 +395,57 @@ const showEmployee = () => {
 };
 
 // Define function to enable search by role:
-const showAllByRole = ()
+const showAllByRoleParameters = () => {
+    inquirer
+        .prompt({
+            name: 'role',
+            type: 'list',
+            message: 'Select role:',
+            choices: [...roleArray, 'Go Back']
+        }).then ((res) => {
+            showAllByRole(res.role).then((response) => {
+                console.table(response);
+                runApp();
+            });
+        });
+};
+
+const showAllByRole = (role) => {
+    return new Promise((resolve, reject) => {
+        connection.query(
+            `SELECT id, first_name, last_name, roles.title, department.name, roles.salary 
+            FROM employee WHERE ? ORDER BY id`,
+            [{ title: role }],
+            (err, data) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(data);
+                }
+            }
+        );
+    });
+};
+
+const showAllByDepartmentParameters = () => {
+    inquirer
+        .prompt({
+            name: 'department',
+            type: 'list',
+            message: 'Select department:',
+            choices: [...departmentArray, 'Go back'],
+        }).then((res) => {
+            showAllByDepartment(res.department).then((response) => {
+                console.table(response);
+                runApp();
+            });
+        });
+};
+
+const showAllByDepartment = (department) => {
+    return new Promise((resolve, reject) => {
+        connection.query(
+            `SELECT  `
+        )
+    })
+}
