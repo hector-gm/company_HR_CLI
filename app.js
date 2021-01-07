@@ -1,6 +1,8 @@
+//Declaring the Node dependencies:
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 
+//Establishing connection to MySQL for database management:
 const connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
@@ -14,9 +16,10 @@ connection.connect(async (err) => {
   updateEmployeeArray();
   updateDepartmentArray();
   updateRoleArray();
-  mainMenu();
+  runApp();
 });
 
+//Define All Roles look up function:
 const getAllRoles = () => {
   return new Promise((resolve, reject) => {
     connection.query(
@@ -34,6 +37,7 @@ const getAllRoles = () => {
 
 let roleArray = [];
 
+//Define Update Roles function:
 const updateRoleArray = () => {
   roleArray = [];
   getAllRoles().then((res) => {
@@ -43,6 +47,7 @@ const updateRoleArray = () => {
   });
 };
 
+//Define All Departments look up function:
 const getAllDepts = () => {
   return new Promise((resolve, reject) => {
     connection.query("SELECT id, name FROM department", (err, data) => {
@@ -57,6 +62,7 @@ const getAllDepts = () => {
 
 let departmentArray = [];
 
+//Define Update Departments function:
 const updateDepartmentArray = () => {
   departmentArray = [];
   getAllDepts().then((res) => {
@@ -66,6 +72,7 @@ const updateDepartmentArray = () => {
   });
 };
 
+//Define All Employees look up function:
 const getAllEmployees = () => {
   return new Promise((resolve, reject) => {
     connection.query(
@@ -93,6 +100,7 @@ const getAllEmployees = () => {
   });
 };
 
+//Define cross-table lookup for employee info
 const getFullEmployeeInfo = () => {
   return new Promise((resolve, reject) => {
     connection.query(
@@ -126,6 +134,7 @@ const getFullEmployeeInfo = () => {
 
 let employeeArray = [];
 
+//Define Employee list update function:
 const updateEmployeeArray = () => {
   employeeArray = [];
   getAllEmployees().then((res) => {
@@ -135,7 +144,8 @@ const updateEmployeeArray = () => {
   });
 };
 
-const mainMenu = () => {
+//Call on Inquirer and run our CLI app:
+const runApp = () => {
   inquirer
     .prompt([
       {
@@ -206,7 +216,7 @@ const createNew = () => {
           break;
 
         case "Go Back":
-          mainMenu();
+          runApp();
           break;
 
         default:
@@ -215,6 +225,7 @@ const createNew = () => {
     });
 };
 
+//If user selects to add new employee option, run the following prompt:
 const newEmployee = () => {
   inquirer
     .prompt([
@@ -280,7 +291,7 @@ const newEmployee = () => {
               );
               console.table(employee);
               updateEmployeeArray();
-              mainMenu();
+              runApp();
             });
         });
     })
@@ -289,6 +300,7 @@ const newEmployee = () => {
     });
 };
 
+//If user chooses to create a new role, the following prompt runs:
 const newRole = () => {
   inquirer
     .prompt([
@@ -334,11 +346,12 @@ const newRole = () => {
           });
           console.table(role);
           updateRoleArray();
-          mainMenu();
+          runApp();
         });
     });
 };
 
+//Define function to create a new department in the database:
 const newDepartment = () => {
   inquirer
     .prompt({
@@ -357,10 +370,11 @@ const newDepartment = () => {
         }
       );
       updateDepartmentArray();
-      mainMenu();
+      runApp();
     });
 };
 
+//Define the function to allow looking up records by categories:
 const readInfo = () => {
   inquirer
     .prompt({
@@ -382,7 +396,7 @@ const readInfo = () => {
         case "View all employees":
           getAllEmployees().then((res) => {
             console.table(res);
-            mainMenu();
+            runApp();
           });
 
           break;
@@ -390,7 +404,7 @@ const readInfo = () => {
         case "View all roles":
           getAllRoles().then((res) => {
             console.table(res);
-            mainMenu();
+            runApp();
           });
 
           break;
@@ -398,7 +412,7 @@ const readInfo = () => {
         case "View all departments":
           getAllDepts().then((res) => {
             console.table(res);
-            mainMenu();
+            runApp();
           });
 
           break;
@@ -416,7 +430,7 @@ const readInfo = () => {
           break;
 
         case "Go Back":
-          mainMenu();
+          runApp();
 
         default:
           break;
@@ -424,6 +438,7 @@ const readInfo = () => {
     });
 };
 
+//Define the individual record look up function referenced above:
 const viewOneEmployee = () => {
   inquirer
     .prompt({
@@ -442,12 +457,13 @@ const viewOneEmployee = () => {
               console.table(element);
             }
           });
-          mainMenu();
+          runApp();
         });
       }
     });
 };
 
+//Set parameter definition function to allow search by role:
 const viewAllByRoleQuestion = () => {
   inquirer
     .prompt({
@@ -459,7 +475,7 @@ const viewAllByRoleQuestion = () => {
     .then((res) => {
       viewAllByRole(res.role).then((response) => {
         console.table(response);
-        mainMenu();
+        runApp();
       });
     });
 };
@@ -493,6 +509,7 @@ const viewAllByRole = (role) => {
   });
 };
 
+//Set parameter definition function to allow search by department:
 const viewAllByDeptQuestion = () => {
   inquirer
     .prompt({
@@ -504,7 +521,7 @@ const viewAllByDeptQuestion = () => {
     .then((res) => {
       viewAllByDept(res.dept).then((response) => {
         console.table(response);
-        mainMenu();
+        runApp();
       });
     });
 };
@@ -538,6 +555,7 @@ const viewAllByDept = (dept) => {
   });
 };
 
+//If user selects option to delete a record, parameter definition is prompted
 const deleteInfo = () => {
   inquirer
     .prompt({
@@ -550,11 +568,12 @@ const deleteInfo = () => {
       if (answer.deleteWhat === "An Employee") {
         chooseEmployee();
       } else {
-        mainMenu();
+        runApp();
       }
     });
 };
 
+//Present list of employees currently in the database to allow user to select record to be deleted
 const chooseEmployee = () => {
   inquirer
     .prompt({
@@ -565,14 +584,15 @@ const chooseEmployee = () => {
     })
     .then((answer) => {
       if (answer.toDelete === "Go Back") {
-        mainMenu();
+        runApp();
       } else {
         employeet(answer.toDelete);
-        mainMenu();
+        runApp();
       }
     });
 };
 
+//Pass database argument to MySQL to delete record by ID
 const employeet = (name) => {
   let ID;
   getAllEmployees().then((res) => {
@@ -585,6 +605,7 @@ const employeet = (name) => {
   });
 };
 
+//Give option to update a record in the database
 const updateInfo = () => {
   inquirer
     .prompt({
@@ -616,6 +637,7 @@ const updateInfo = () => {
     });
 };
 
+//Present array of employee records to be updated, followed by prompt to select which record detail to update
 const pickEmployee = () => {
   inquirer
     .prompt({
@@ -632,7 +654,7 @@ const pickEmployee = () => {
       let managerID;
 
       if (answer.toUpdate === "Go Back") {
-        mainMenu();
+        runApp();
       } else {
         getFullEmployeeInfo()
           .then((res) => {
@@ -687,7 +709,7 @@ const pickEmployee = () => {
                   console.log(obj, employeeID, roleID, managerID);
                   updateEmployee(obj, employeeID, roleID, managerID);
                   updateEmployeeArray();
-                  mainMenu();
+                  runApp();
                 });
               });
           });
@@ -695,6 +717,7 @@ const pickEmployee = () => {
     });
 };
 
+//Pass argument to MySQL to allow record update
 const updateEmployee = (obj, employeeID, roleID, managerID) => {
   connection.query(
     `UPDATE employee SET ? WHERE ?`,
@@ -715,6 +738,7 @@ const updateEmployee = (obj, employeeID, roleID, managerID) => {
   );
 };
 
+//If role is to be updated, present array to select
 const pickRole = () => {
   inquirer
     .prompt({
@@ -728,6 +752,7 @@ const pickRole = () => {
     });
 };
 
+//
 const updateRole = (role) => {
   let roleID;
   let salary;
@@ -789,7 +814,7 @@ const updateRole = (role) => {
               }
             );
             updateRoleArray();
-            mainMenu();
+            runApp();
           });
         });
     });
@@ -834,7 +859,7 @@ const updateDept = (dept) => {
           }
         );
         updateDepartmentArray();
-        mainMenu();
+        runApp();
       });
     });
 };
