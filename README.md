@@ -18,7 +18,7 @@
 Copy this repository's files and make sure to run the `npm install` command in the terminal to make sure node dependencies are up and running. For this project, Inquirer and MySQL are required.
 
 ## Usage  
-The schema file for MySQL provides an initial database template that can be used to test the CLI functionality. The app allows records to be updated and deleted, so feel free to use the app itself to creat your database as needed or modify the MySQL schema to define your own tables.
+The schema file for MySQL provides an initial database template that can be used to test the CLI functionality. The app allows records to be updated and deleted, so feel free to use the app itself to create your database as needed or modify the MySQL schema to define your own tables.
 
 
 
